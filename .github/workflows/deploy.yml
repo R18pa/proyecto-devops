@@ -15,6 +15,15 @@ jobs:
       - name: Construir imagen Docker
         run: docker build -t bmw-web .
 
+      - name: Prueba basica - verificar imagen
+        run: |
+          docker run -d --name test-container -p 8080:80 bmw-web
+          sleep 3
+          curl -f http://localhost:8080 || exit 1
+          echo "Prueba exitosa - la aplicacion responde correctamente"
+          docker stop test-container
+          docker rm test-container
+
       - name: Desplegar en servidor AWS
         uses: appleboy/ssh-action@v1.0.0
         with:
