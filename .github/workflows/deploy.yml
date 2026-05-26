@@ -1,0 +1,29 @@
+name: Pipeline CI/CD BMW DevOps
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clonar repositorio
+        uses: actions/checkout@v3
+
+      - name: Construir imagen Docker
+        run: docker build -t bmw-web .
+
+      - name: Desplegar en servidor AWS
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_KEY }}
+          script: |
+            docker service rm bmw-web || true
+            docker rmi bmw-web || true
+            cd ~
+            docker build -t bmw-web .
+            docker service create --name bmw-web --publish 8080:80 bmw-web
