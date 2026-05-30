@@ -8,6 +8,7 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
     steps:
       - name: Clonar repositorio
         uses: actions/checkout@v3
@@ -36,6 +37,7 @@ jobs:
             git clone https://github.com/R18pa/proyecto-devops.git
             cd proyecto-devops
             docker service rm bmw-web || true
-            docker rmi bmw-web || true
-            docker build -t bmw-web .
-            docker service create --name bmw-web --publish 8080:80 bmw-web
+            sleep 3
+            docker rmi bmw-web:latest || true
+            docker build -t bmw-web:latest .
+            docker service create --name bmw-web --publish published=80,target=80 bmw-web:latest
