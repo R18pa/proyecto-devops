@@ -20,7 +20,7 @@ jobs:
           docker run -d --name test-container -p 8080:80 bmw-web
           sleep 3
           curl -f http://localhost:8080 || exit 1
-          echo "Prueba exitosa - la aplicacion responde correctamente"
+          echo "Prueba exitosa"
           docker stop test-container
           docker rm test-container
 
@@ -32,10 +32,9 @@ jobs:
           key: ${{ secrets.EC2_KEY }}
           script: |
             cd ~
-            git clone https://github.com/R18pa/proyecto-devops.git tmp-deploy || true
-            cp -r tmp-deploy/app ./app || true
-            cp tmp-deploy/Dockerfile ./Dockerfile || true
-            rm -rf tmp-deploy
+            rm -rf proyecto-devops
+            git clone https://github.com/R18pa/proyecto-devops.git
+            cd proyecto-devops
             docker service rm bmw-web || true
             docker rmi bmw-web || true
             docker build -t bmw-web .
